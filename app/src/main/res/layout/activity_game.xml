@@ -19,6 +19,21 @@
             android:layout_weight="1">
 
             <TextView
+                android:id="@+id/defeated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="42dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="144dp"
+                android:layout_marginBottom="82dp"
+                android:text="@string/defeated"
+                android:textColor="#FFFFFF"
+                app:layout_constraintBottom_toTopOf="@+id/leftButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/scoreView" />
+
+            <TextView
                 android:id="@+id/scoreView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -70,6 +85,16 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.674"
                 tools:ignore="SpeakableTextPresentCheck" />
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/playerView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/player_stand"
+                tools:ignore="MissingConstraints"
+                tools:layout_editor_absoluteX="1dp"
+                tools:layout_editor_absoluteY="0dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -144,6 +169,45 @@
             android:layout_height="match_parent"
             android:layout_weight="1">
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="192dp"
+                android:layout_height="74dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/pauseButton"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0">
+
+                <TextView
+                    android:id="@+id/enemyName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:text="TextView"
+                    android:textColor="#FFFFFF"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.531"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.672" />
+
+                <ProgressBar
+                    android:id="@+id/enemyLife"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="140dp"
+                    android:layout_height="18dp"
+                    android:max="100"
+                    android:progress="100"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.692"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <ImageButton
                 android:id="@+id/pauseButton"
                 android:layout_width="50dp"
@@ -164,12 +228,12 @@
                 android:layout_marginStart="10dp"
                 android:text="@string/rotaion"
                 app:cornerRadius="50dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/holdButton"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.162"
+                app:layout_constraintHorizontal_bias="0.16"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.738"
+                app:layout_constraintVertical_bias="1.0"
                 tools:ignore="SpeakableTextPresentCheck" />
 
             <Button

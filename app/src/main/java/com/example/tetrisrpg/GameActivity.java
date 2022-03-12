@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -20,9 +21,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import java.util.Arrays;
 import java.util.List;
+
+import pl.droidsonroids.gif.GifImageView;
 
 public class GameActivity extends AppCompatActivity{
     //游戏区域空间
@@ -49,6 +53,10 @@ public class GameActivity extends AppCompatActivity{
     int curSpeed = 800;
     //分数
     int score = 0;
+    //游戏难度
+    int level = 1;
+    //杀敌数量
+    int defeated = 0;
     //暂停状态
     boolean isPause = false;
     //GameOver状态
@@ -57,8 +65,11 @@ public class GameActivity extends AppCompatActivity{
     boolean isTspin = false;
     //检查上一个动作是否为Tspin
     boolean isPreTspin = false;
+    //检查刚刚有没有line removing，并识别是消除几行
+    int isPreRemv = 0;
     //hold中的类型
     int holdType = -1;
+
 
     //下落线程
     public Thread downThread;
@@ -70,8 +81,10 @@ public class GameActivity extends AppCompatActivity{
             gameView.invalidate();
             setImage(nextImage, nextTero.type);
             scoreView.setText("Score:"+score);
+            lineRemvAnime();
         };
     };
+
 
     //向左按钮
     Button leftButton;
@@ -88,6 +101,9 @@ public class GameActivity extends AppCompatActivity{
 
     //暂停按钮
     ImageButton pauseButton;
+
+    //玩家图片
+    GifImageView playerView;
 
     //next图片
     ImageView nextImage;
@@ -114,8 +130,12 @@ public class GameActivity extends AppCompatActivity{
         nextImage = findViewById(R.id.nextImage);
         holdImage = findViewById(R.id.holdImage);
 
+        playerView = findViewById(R.id.playerView);
+
         scoreView = (TextView) findViewById(R.id.scoreView);
 
+        //最开始生成一个敌人
+        enemy curEnemy = new enemy(level, maps);
 
         initdata();
         initview();
@@ -160,6 +180,7 @@ public class GameActivity extends AppCompatActivity{
         });
 
 
+        //要不要注释掉以后再说吧
         downButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -330,6 +351,7 @@ public class GameActivity extends AppCompatActivity{
 
                             curTetro = nextTero;
                             nextTero = new Tetrominoes(boxSize, maps);
+
                             //判断游戏是否结束
                             checkOver();
                         }
@@ -496,8 +518,15 @@ public class GameActivity extends AppCompatActivity{
                 j++;
             }
         }
+        isPreRemv = counter;
         goal(counter);
         System.out.println(score);
+    }
+
+    //检测消除几行并播放动画
+    private void lineRemvAnime() {
+        playerView.setImageResource(R.drawable.player_stand);
+        if(isPreRemv != 0) playerView.setImageResource(R.drawable.remove_line);
     }
 
     private void goal(int counter) {

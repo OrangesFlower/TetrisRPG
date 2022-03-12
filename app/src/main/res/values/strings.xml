@@ -24,4 +24,5 @@
     <string name="rotaion">Rotaion</string>
     <string name="hard_drop">HARD DROP</string>
     <string name="hold">HOLD</string>
+    <string name="defeated">Defeated</string>
 </resources>
