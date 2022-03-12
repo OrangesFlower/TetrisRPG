@@ -1,5 +1,6 @@
 package com.example.tetrisrpg;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -18,6 +19,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -49,6 +51,9 @@ public class GameActivity extends AppCompatActivity{
     //生成现在的tetrominoes
     Tetrominoes nextTero = new Tetrominoes(boxSize, maps);
 
+    //生成一个敌人
+    enemy curEnemy;
+
     //下落速度（下落一格的时间间隔）
     int curSpeed = 800;
     //分数
@@ -75,15 +80,27 @@ public class GameActivity extends AppCompatActivity{
     public Thread downThread;
     //检测状态线程
     public Thread checkThread;
+    //敌人状态线程
+    public Thread enemyThread;
+
     public Handler handler =new Handler(){
+        @SuppressLint("HandlerLeak")
         public void handleMessage(android.os.Message msg){
             //重绘画面
             gameView.invalidate();
             setImage(nextImage, nextTero.type);
             scoreView.setText("Score:"+score);
+            defeatNum.setText("Defeated:"+defeated);
+
+            if(msg.what == 1){  //敌人状态的替换
+                enemyName.setText(curEnemy.name);
+                enemyLife.setProgress(100 * curEnemy.lifeValue / curEnemy.maxLife);
+                enemyImage.setImageResource(curEnemy.avatar);
+            }
             lineRemvAnime();
         };
     };
+
 
 
     //向左按钮
@@ -109,9 +126,17 @@ public class GameActivity extends AppCompatActivity{
     ImageView nextImage;
     //hold图片
     ImageView holdImage;
+    //敌人图片
+    ImageView enemyImage;
 
     //分数显示
     TextView scoreView;
+    //击败敌人数显示
+    TextView defeatNum;
+
+    //敌人信息显示
+    TextView enemyName;
+    ProgressBar enemyLife;
 
 
     @Override
@@ -129,18 +154,25 @@ public class GameActivity extends AppCompatActivity{
 
         nextImage = findViewById(R.id.nextImage);
         holdImage = findViewById(R.id.holdImage);
+        enemyImage = findViewById(R.id.enemyImage);
 
         playerView = findViewById(R.id.playerView);
 
         scoreView = (TextView) findViewById(R.id.scoreView);
+        defeatNum = (TextView) findViewById(R.id.defeated);
+        enemyName = (TextView) findViewById(R.id.enemyName);
+        enemyLife = (ProgressBar) findViewById(R.id.enemyLife);
 
-        //最开始生成一个敌人
-        enemy curEnemy = new enemy(level, maps);
+        //敌人系统，生成敌人
+        curEnemy = new enemy(level, maps);
+        checkEnemy();
 
         initdata();
         initview();
         startGame();
         checkGame();
+
+
 
         //左监听
         leftButton.setOnClickListener(new View.OnClickListener() {
@@ -357,7 +389,7 @@ public class GameActivity extends AppCompatActivity{
                         }
 
                         //
-                        handler.sendEmptyMessage(0);
+                        handler.sendEmptyMessage(1);
                     }
                 }
             };
@@ -366,6 +398,26 @@ public class GameActivity extends AppCompatActivity{
 
         curTetro = nextTero;
         nextTero = new Tetrominoes(boxSize, maps);
+    }
+
+    private void checkEnemy() {//检测enemy状态的进程
+        if(enemyThread == null){
+            enemyThread = new Thread(){
+                @Override
+                public void run(){
+                    super.run();
+                    while(true){
+                        //敌人信息
+                        if(curEnemy.lifeValue <= 0){
+                            curEnemy = new enemy(level, maps);
+                            defeated ++;
+                        }
+
+                    }
+                }
+            };
+            enemyThread.start();
+        }
     }
 
     //判断游戏是否结束
@@ -432,8 +484,6 @@ public class GameActivity extends AppCompatActivity{
         mapPaint=new Paint();
         mapPaint.setColor(0xff666666);//方块颜色
         mapPaint.setAntiAlias(true);
-
-
 
 
         //画游戏区域
@@ -525,23 +575,27 @@ public class GameActivity extends AppCompatActivity{
 
     //检测消除几行并播放动画
     private void lineRemvAnime() {
-        playerView.setImageResource(R.drawable.player_stand);
         if(isPreRemv != 0) playerView.setImageResource(R.drawable.remove_line);
     }
 
     private void goal(int counter) {
         float plus = 1;//分数加成
+        float goal = 0;
         if(isPreTspin) plus = 1.5F;
+
         if(counter == 1) {
-            if(isTspin) score += 800 * plus;
-            else score += 100 * plus;
+            if(isTspin) goal = 800 * plus;
+            else goal = 100 * plus;
         }
         else if(counter == 2) {
-            if(isTspin) score += 1200 * plus;
-            else score += 300 * plus;
+            if(isTspin) goal = 1200 * plus;
+            else goal = 300 * plus;
         }
-        else if(counter == 3) score += 500 * plus;
-        else if(counter == 4) score += 800 * plus;
+        else if(counter == 3) goal = 500 * plus;
+        else if(counter == 4) goal = 800 * plus;
+
+        curEnemy.wounded((int) goal);
+        score += goal;
     }
 
     private void checkTspin(){
