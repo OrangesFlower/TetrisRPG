@@ -417,15 +417,18 @@ public class GameActivity extends AppCompatActivity{
                 public void run(){
                     super.run();
                     while(true){
-                        //敌人休息
-                        try {
-                            sleep(curEnemy.interval);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                        if (!isPause && !isOver){
+                            //敌人休息
+                            try {
+                                sleep(curEnemy.interval);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            //敌人进攻
+                            curEnemy.attack();
+                            maps = curEnemy.getMaps();
                         }
-                        //敌人进攻
-                        curEnemy.attack();
-                        maps = curEnemy.getMaps();
+
 
 
                     }
