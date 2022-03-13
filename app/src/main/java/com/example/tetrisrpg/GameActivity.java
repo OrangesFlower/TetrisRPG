@@ -82,6 +82,8 @@ public class GameActivity extends AppCompatActivity{
     public Thread checkThread;
     //敌人状态线程
     public Thread enemyThread;
+    //敌人攻击线程
+    public Thread enemyAttack;
 
     public Handler handler =new Handler(){
         @SuppressLint("HandlerLeak")
@@ -92,11 +94,17 @@ public class GameActivity extends AppCompatActivity{
             scoreView.setText("Score:"+score);
             defeatNum.setText("Defeated:"+defeated);
 
-            if(msg.what == 1){  //敌人状态的替换
-                enemyName.setText(curEnemy.name);
-                enemyLife.setProgress(100 * curEnemy.lifeValue / curEnemy.maxLife);
-                enemyImage.setImageResource(curEnemy.avatar);
+            //敌人状态的替换
+            enemyName.setText(curEnemy.name);
+            enemyLife.setProgress(100 * curEnemy.lifeValue / curEnemy.maxLife);
+            enemyImage.setImageResource(curEnemy.avatar);
+            curEnemy.refreshMaps(maps);
+
+            if(curEnemy.lifeValue <= 0){
+                curEnemy = new enemy(level, maps);
+                defeated ++;
             }
+
             lineRemvAnime();
         };
     };
@@ -165,12 +173,14 @@ public class GameActivity extends AppCompatActivity{
 
         //敌人系统，生成敌人
         curEnemy = new enemy(level, maps);
-        checkEnemy();
+
 
         initdata();
         initview();
         startGame();
         checkGame();
+        checkEnemy();
+
 
 
 
@@ -389,7 +399,7 @@ public class GameActivity extends AppCompatActivity{
                         }
 
                         //
-                        handler.sendEmptyMessage(1);
+                        handler.sendEmptyMessage(0);
                     }
                 }
             };
@@ -407,11 +417,16 @@ public class GameActivity extends AppCompatActivity{
                 public void run(){
                     super.run();
                     while(true){
-                        //敌人信息
-                        if(curEnemy.lifeValue <= 0){
-                            curEnemy = new enemy(level, maps);
-                            defeated ++;
+                        //敌人休息
+                        try {
+                            sleep(curEnemy.interval);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
+                        //敌人进攻
+                        curEnemy.attack();
+                        maps = curEnemy.getMaps();
+
 
                     }
                 }
@@ -422,8 +437,8 @@ public class GameActivity extends AppCompatActivity{
 
     //判断游戏是否结束
     public void checkOver(){
-        for (Point box : curTetro.boxs){//若固定后有一个方块单元的纵坐标<0，游戏结束
-            if(box.y >= 0 && maps[box.x][box.y]) {
+        for (Point box : curTetro.boxs){//若新生成的tetrominoes满足以下条件
+            if(box.y >= 0 && maps[box.x][box.y] && curTetro.xLocation <= 0) {
                 isOver = true;
                 System.out.println("GAME OVER");
             }
