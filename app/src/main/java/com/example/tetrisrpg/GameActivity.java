@@ -210,12 +210,14 @@ public class GameActivity extends AppCompatActivity{
         downButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction()==MotionEvent.ACTION_DOWN){
-                    curSpeed = curSpeed / 2;
-                    System.out.println("加速："+curSpeed);
-                }else if (motionEvent.getAction()==MotionEvent.ACTION_UP){
-                    curSpeed = curSpeed * 2;
-                    System.out.println("减速："+curSpeed);
+                if (!isPause && !isOver){
+                    if (motionEvent.getAction()==MotionEvent.ACTION_DOWN){
+                        curSpeed = curSpeed / 2;
+                        System.out.println("加速："+curSpeed);
+                    }else if (motionEvent.getAction()==MotionEvent.ACTION_UP){
+                        curSpeed = curSpeed * 2;
+                        System.out.println("减速："+curSpeed);
+                    }
                 }
                 return false;
             }
@@ -253,8 +255,8 @@ public class GameActivity extends AppCompatActivity{
                     while(!curTetro.isBottom){
                         curTetro.move(0,1);
                     }
+                    curTetro.isFix = true;
                 }
-                curTetro.isFix = true;
                 gameView.invalidate();
             }
         });
