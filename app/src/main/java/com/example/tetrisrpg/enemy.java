@@ -1,5 +1,6 @@
 package com.example.tetrisrpg;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class enemy {
@@ -16,7 +17,23 @@ public class enemy {
     int interval; //攻击时间间隔
 
     void attack(){
-        rising();
+        switch(type) {
+            case 0:
+                rising();
+                break;
+            case 1:
+                diging();
+                break;
+            case 2:
+                confuse();
+                break;
+            case 3:
+                speedUp();
+                break;
+            case 4:
+                setBlock();
+                break;
+        }
     }
 
     enemy(int level, boolean[][] maps){
@@ -28,7 +45,7 @@ public class enemy {
         type = random.nextInt(5);
         setType(type);
 
-        interval = 90000 + random.nextInt(4) * 10000;
+        interval = 50000 + random.nextInt(4) * 10000;
     }
 
     void refreshMaps(boolean[][] maps){
@@ -121,6 +138,9 @@ public class enemy {
     }
 
     void setBlock(){//封锁技能
+        for (boolean[] booleans : block) {//清空之前block的界面
+            Arrays.fill(booleans, false);
+        }
         int x;//加防的横坐标
         int y;//加防的纵坐标
         Random random = new Random();

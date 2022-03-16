@@ -46,6 +46,8 @@ public class GameActivity extends AppCompatActivity{
     Paint linePaint,boxPaint,mapPaint;
     //界面状态画笔（暂停/结束）
     Paint statePaint;
+    //block画笔
+    Paint blockPaint;
     //生成现在的tetrominoes
     Tetrominoes curTetro;
     //生成现在的tetrominoes
@@ -70,10 +72,13 @@ public class GameActivity extends AppCompatActivity{
     boolean isTspin = false;
     //检查上一个动作是否为Tspin
     boolean isPreTspin = false;
+    //有没有被攻击扰乱
+    boolean isConfuse = false;
     //检查刚刚有没有line removing，并识别是消除几行
     int isPreRemv = 0;
     //hold中的类型
     int holdType = -1;
+
 
 
     //下落线程
@@ -86,6 +91,30 @@ public class GameActivity extends AppCompatActivity{
     public Thread enemyAttack;
 
     public Handler handler =new Handler(){
+        @SuppressLint("HandlerLeak")
+        public void handleMessage(android.os.Message msg){
+            //重绘画面
+            gameView.invalidate();
+            setImage(nextImage, nextTero.type);
+            scoreView.setText("Score:"+score);
+            defeatNum.setText("Defeated:"+defeated);
+
+            //敌人状态的替换
+            enemyName.setText(curEnemy.name);
+            enemyLife.setProgress(100 * curEnemy.lifeValue / curEnemy.maxLife);
+            enemyImage.setImageResource(curEnemy.avatar);
+            curEnemy.refreshMaps(maps);
+
+            if(curEnemy.lifeValue <= 0){
+                curEnemy = new enemy(level, maps);
+                defeated ++;
+            }
+
+            lineRemvAnime();
+        };
+    };
+
+    public Handler enemyHandler =new Handler(){
         @SuppressLint("HandlerLeak")
         public void handleMessage(android.os.Message msg){
             //重绘画面
@@ -189,7 +218,8 @@ public class GameActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 if(!isPause && !isOver){//暂停
-                    curTetro.move(-1 , 0);
+                    if (isConfuse) curTetro.move(1 , 0);
+                    else curTetro.move(-1 , 0);
                 }
                 gameView.invalidate();
             }
@@ -200,7 +230,8 @@ public class GameActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 if(!isPause && !isOver){//暂停
-                    curTetro.move(1 , 0);
+                    if (isConfuse) curTetro.move(-1 , 0);
+                    else curTetro.move(1 , 0);
                 }
                 gameView.invalidate();
             }
@@ -426,9 +457,30 @@ public class GameActivity extends AppCompatActivity{
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
+
                             //敌人进攻
                             curEnemy.attack();
                             maps = curEnemy.getMaps();
+                            if (curEnemy.speedUp != 0) {
+                                curSpeed = curSpeed / 2;
+                                try {//持续几秒
+                                    sleep(curEnemy.speedUp);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                curSpeed = curSpeed * 2;
+                                curEnemy.speedUp = 0;
+                            }else if (curEnemy.confuse != 0) {
+                                isConfuse = true;
+                                try {
+                                    sleep(curEnemy.confuse);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                isConfuse = false;
+                                curEnemy.confuse = 0;
+                            }
+
                         }
 
 
@@ -559,6 +611,25 @@ public class GameActivity extends AppCompatActivity{
                     canvas.drawText("GAME",gameView.getWidth() / 2 - statePaint.measureText("GAME") * 3/4,gameView.getHeight() / 2,statePaint);
                     canvas.drawText("OVER",gameView.getWidth() / 2 - statePaint.measureText("OVER") * 3/4,gameView.getHeight() / 2 + 100,statePaint);
                 }
+
+
+                //敌人的block技能
+                //创建状态画笔
+                blockPaint = new Paint();
+                blockPaint.setARGB(100,255,255,0);//文字
+                blockPaint.setAntiAlias(true);
+
+                for (int i = 0; i < curEnemy.block.length; i++) {
+                    for(int j = 0; j < curEnemy.block[i].length; j++){
+                        if (curEnemy.block[i][j]){
+                            canvas.drawRect(//画矩形->存在boxs中的box类，有则在相应的xy位置画个矩形
+                                    i * boxSize,
+                                    j * boxSize,
+                                    i * boxSize + boxSize,
+                                    j * boxSize + boxSize, blockPaint);
+                        }
+                    }
+                }
             }
         };
 
@@ -581,7 +652,9 @@ public class GameActivity extends AppCompatActivity{
                 for (int y = j; y > 0; y--) {
                     for(int i = 0; i < maps.length; i++){
                         //一行全为true才进行消行
-                        maps[i][y] = maps[i][y - 1];
+                        if(!curEnemy.block[i][y]){
+                            maps[i][y] = maps[i][y - 1];
+                        }
                     }
                 }
                 counter++;
