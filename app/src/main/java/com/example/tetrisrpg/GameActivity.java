@@ -116,7 +116,7 @@ public class GameActivity extends AppCompatActivity{
 
     public Handler enemyHandler =new Handler(){
         @SuppressLint("HandlerLeak")
-        public void handleMessage(android.os.Message msg){
+        public void handleMessage(android.os.Message msg){//敌人的画面刷新
             //重绘画面
             gameView.invalidate();
             setImage(nextImage, nextTero.type);
@@ -431,7 +431,7 @@ public class GameActivity extends AppCompatActivity{
                             checkOver();
                         }
 
-                        //
+                        //因为敌人死亡与生成往往在方块落到底之后，所以在之后判断敌人状态完全合理
                         handler.sendEmptyMessage(0);
                     }
                 }
@@ -450,41 +450,38 @@ public class GameActivity extends AppCompatActivity{
                 public void run(){
                     super.run();
                     while(true){
-                        if (!isPause && !isOver){
-                            //敌人休息
-                            try {
-                                sleep(curEnemy.interval);
+                        if(isPause || isPause) {//如果正在暂停
+                            continue;//跳过这次循环（不予攻击），缺点是能通过暂停躲过攻击，以后再说
+                        }
+
+                        try {
+                            sleep(curEnemy.interval);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        //敌人进攻
+                        curEnemy.attack();
+                        maps = curEnemy.getMaps();
+                        if (curEnemy.speedUp != 0) {
+                            curSpeed = curSpeed / 2;
+                            try {//持续几秒
+                                sleep(curEnemy.speedUp);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-
-                            //敌人进攻
-                            curEnemy.attack();
-                            maps = curEnemy.getMaps();
-                            if (curEnemy.speedUp != 0) {
-                                curSpeed = curSpeed / 2;
-                                try {//持续几秒
-                                    sleep(curEnemy.speedUp);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                                curSpeed = curSpeed * 2;
-                                curEnemy.speedUp = 0;
-                            }else if (curEnemy.confuse != 0) {
-                                isConfuse = true;
-                                try {
-                                    sleep(curEnemy.confuse);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                                isConfuse = false;
-                                curEnemy.confuse = 0;
+                            curSpeed = curSpeed * 2;
+                            curEnemy.speedUp = 0;
+                        }else if (curEnemy.confuse != 0) {
+                            isConfuse = true;
+                            try {
+                                sleep(curEnemy.confuse);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
                             }
-
+                            isConfuse = false;
+                            curEnemy.confuse = 0;
                         }
-
-
-
                     }
                 }
             };
