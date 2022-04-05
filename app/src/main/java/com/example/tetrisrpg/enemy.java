@@ -5,6 +5,7 @@ import java.util.Random;
 
 public class enemy {
     public String name;
+    public String ability;
     public int lifeValue;
     public int maxLife;
     public int type;
@@ -61,22 +62,27 @@ public class enemy {
             case 0:
                 name = "MR";
                 avatar = R.drawable.mr;
+                ability = "RISING\nRising! Redundant line!";
                 break;
             case 1:
                 name = "ZCC";
                 avatar = R.drawable.zcc;
+                ability = "DIGGING\nIt will break some cube!";
                 break;
             case 2:
                 name = "YZX";
                 avatar = R.drawable.yzx;
+                ability = "CONFUSE\nNow your control keys are reversed!";
                 break;
             case 3:
                 name = "LYB";
                 avatar = R.drawable.lyb;
+                ability = "ACCELERATE\nNow the falling speed is twice!";
                 break;
             case 4:
                 name = "LY";
                 avatar = R.drawable.ly;
+                ability = "BLOCK\nYou can't remove yellow block!";
                 break;
         }
     }

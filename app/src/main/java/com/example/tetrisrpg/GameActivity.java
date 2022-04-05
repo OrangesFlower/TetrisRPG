@@ -44,6 +44,7 @@ public class GameActivity extends AppCompatActivity{
     int boxSize;
     //辅助线画笔、方块画笔
     Paint linePaint,boxPaint,mapPaint;
+    private Paint borderPaint;
     //界面状态画笔（暂停/结束）
     Paint statePaint;
     //block画笔
@@ -101,6 +102,7 @@ public class GameActivity extends AppCompatActivity{
 
             //敌人状态的替换
             enemyName.setText(curEnemy.name);
+            enemyAbility.setText(curEnemy.ability);
             enemyLife.setProgress(100 * curEnemy.lifeValue / curEnemy.maxLife);
             enemyImage.setImageResource(curEnemy.avatar);
             curEnemy.refreshMaps(maps);
@@ -125,6 +127,7 @@ public class GameActivity extends AppCompatActivity{
 
             //敌人状态的替换
             enemyName.setText(curEnemy.name);
+            enemyAbility.setText(curEnemy.ability);
             enemyLife.setProgress(100 * curEnemy.lifeValue / curEnemy.maxLife);
             enemyImage.setImageResource(curEnemy.avatar);
             curEnemy.refreshMaps(maps);
@@ -173,6 +176,7 @@ public class GameActivity extends AppCompatActivity{
 
     //敌人信息显示
     TextView enemyName;
+    TextView enemyAbility;
     ProgressBar enemyLife;
 
 
@@ -198,6 +202,7 @@ public class GameActivity extends AppCompatActivity{
         scoreView = (TextView) findViewById(R.id.scoreView);
         defeatNum = (TextView) findViewById(R.id.defeated);
         enemyName = (TextView) findViewById(R.id.enemyName);
+        enemyAbility = (TextView) findViewById(R.id.abilityView);
         enemyLife = (ProgressBar) findViewById(R.id.enemyLife);
 
         //敌人系统，生成敌人
@@ -398,7 +403,7 @@ public class GameActivity extends AppCompatActivity{
                             e.printStackTrace();
                         }
                         //下落之前判断是否暂停
-                        if(isPause || isPause) {
+                        if(isPause || isOver) {
                             handler.sendEmptyMessage(0);
                             continue;//跳过这次循环
                         }
@@ -450,7 +455,7 @@ public class GameActivity extends AppCompatActivity{
                 public void run(){
                     super.run();
                     while(true){
-                        if(isPause || isPause) {//如果正在暂停
+                        if(isPause || isOver) {//如果正在暂停
                             continue;//跳过这次循环（不予攻击），缺点是能通过暂停躲过攻击，以后再说
                         }
 
@@ -458,6 +463,10 @@ public class GameActivity extends AppCompatActivity{
                             sleep(curEnemy.interval);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
+                        }
+
+                        if(isPause || isOver) {//如果正在暂停
+                            continue;//跳过这次循环（不予攻击），缺点是能通过暂停躲过攻击，以后再说
                         }
 
                         //敌人进攻
@@ -549,6 +558,11 @@ public class GameActivity extends AppCompatActivity{
         linePaint.setStrokeWidth((float) 5.0);//线宽
         linePaint.setAntiAlias(true);//抗锯齿
 
+        borderPaint=new Paint();
+        borderPaint.setARGB(225,79,165,213);//辅助线颜色
+        borderPaint.setStrokeWidth((float) 5.0);//线宽
+        borderPaint.setAntiAlias(true);//抗锯齿
+
         //创建map画笔
         mapPaint=new Paint();
         mapPaint.setColor(0xff666666);//方块颜色
@@ -585,6 +599,7 @@ public class GameActivity extends AppCompatActivity{
                             box.x * boxSize + boxSize,
                             box.y * boxSize + boxSize, boxPaint);
                 }
+
                 //竖线
                 for (int x = 0; x <= maps.length; x++) {
                     canvas.drawLine(x * boxSize, 0, x * boxSize , 20 * boxSize, linePaint);
@@ -593,6 +608,12 @@ public class GameActivity extends AppCompatActivity{
                 for (int y = 0; y <= maps[0].length; y++) {
                     canvas.drawLine(0, y * boxSize, 10 * boxSize, y * boxSize, linePaint);
                 }
+                //边框
+                canvas.drawLine(0,0,10 * boxSize, 0, borderPaint);
+                canvas.drawLine(0,0,0, 20 * boxSize, borderPaint);
+                canvas.drawLine(10 * boxSize,20 * boxSize,10 * boxSize, 0, borderPaint);
+                canvas.drawLine(10 * boxSize,20 * boxSize,0, 20 * boxSize, borderPaint);
+
 
                 //创建状态画笔
                 statePaint = new Paint();

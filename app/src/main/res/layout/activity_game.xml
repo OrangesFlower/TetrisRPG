@@ -104,11 +104,23 @@
             android:layout_weight="1">
 
             <LinearLayout
-                android:layout_width="51dp"
-                android:layout_height="145dp"
+                android:layout_width="53dp"
+                android:layout_height="216dp"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/next"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/textview_border"
+                    android:paddingLeft="5dp"
+                    android:text="NEXT"
+                    android:textColor="#4fa5d5"
+                    app:layout_constraintBottom_toTopOf="@+id/nextView"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/nextView"
@@ -127,12 +139,17 @@
                         tools:ignore="ImageContrastCheck" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <TextView
+                    android:id="@+id/Hold"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1.5">
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/textview_border"
+                    android:paddingLeft="5dp"
+                    android:text="HOLD"
+                    android:textColor="#4fa5d5"
+                    app:layout_constraintBottom_toTopOf="@+id/nextView"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/holdView"
@@ -157,7 +174,9 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
+                android:background="@drawable/textview_border"
                 android:orientation="vertical"
+                android:padding="1dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -168,6 +187,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/abilityView"
+                android:layout_width="164dp"
+                android:layout_height="65dp"
+                android:background="@drawable/textview_border"
+                android:gravity="center"
+                android:text="ability"
+                android:textColor="#FF5000"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.274" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="192dp"
