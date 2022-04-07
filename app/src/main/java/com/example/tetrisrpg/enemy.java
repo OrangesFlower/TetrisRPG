@@ -47,8 +47,8 @@ public class enemy {
         type = random.nextInt(5);
         //type = 4;
         setType(type);
-
-        interval = 50000 + random.nextInt(4) * 10000;
+//之后要改成随机的
+        interval = 10000;
     }
 
     void refreshMaps(boolean[][] maps){
@@ -84,7 +84,7 @@ public class enemy {
             case 4:
                 name = "LY";
                 avatar = R.drawable.ly;
-                ability = "BLOCK\nYou can't remove yellow block!";
+                ability = "BLOCK\nYou can't pass the yellow line!";
                 break;
         }
     }
