@@ -35,6 +35,9 @@ public class Tetrominoes {
     //主进程中传过来的maps
     boolean[][] maps;
 
+    //敌人攻击时传过来的新底部参数
+    int bottom = 19;
+
     Tetrominoes(int boxSize, boolean maps[][]){
         this.maps = maps;
         Random random = new Random();
@@ -183,7 +186,7 @@ public class Tetrominoes {
     public void checkBottom(){//到底了吗
         isBottom = false;
         for(Point box : boxs){
-            if(box.y >= 19) isBottom = true;
+            if(box.y >= bottom) isBottom = true;
             else if(box.y >= 0){
                 if(maps[box.x][box.y + 1]) isBottom = true;
             }

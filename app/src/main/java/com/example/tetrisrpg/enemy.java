@@ -11,6 +11,7 @@ public class enemy {
     public int type;
     boolean[][] maps;
     boolean[][] block = new boolean[10][20];//防御的坐标
+    int target = 20;
     int speedUp = 0;//加速时长
     int confuse = 0;//迷惑时常
     int level;
@@ -44,6 +45,7 @@ public class enemy {
         lifeValue = maxLife;
         Random random = new Random();
         type = random.nextInt(5);
+        //type = 4;
         setType(type);
 
         interval = 50000 + random.nextInt(4) * 10000;
@@ -144,20 +146,19 @@ public class enemy {
     }
 
     void setBlock(){//封锁技能
-        for (boolean[] booleans : block) {//清空之前block的界面
-            Arrays.fill(booleans, false);
-        }
-        int x;//加防的横坐标
-        int y;//加防的纵坐标
+        int max = 0;
         Random random = new Random();
-        for (int i = 0; i < 3; i++){//暂且加防三个洞
-            x = random.nextInt(10);
-            y = random.nextInt(20);
-            while(!maps[x][y]){//若要加防位置是空的，则重新选择孔位。
-                x = random.nextInt(10);
-                y = random.nextInt(20);
+
+        OUT:
+        for (int i = 0; i < 20; i++){//找到最高行
+            for(int j = 0; j < 10; j++){
+                if (maps[j][i]){
+                   max = i;
+                   break OUT;//跳出最外层循环
+                }
             }
-            block[x][y] = true;
         }
+
+        target = max + (20 - max) / 2;
     }
 }

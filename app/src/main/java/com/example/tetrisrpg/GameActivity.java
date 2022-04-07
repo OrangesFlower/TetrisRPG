@@ -106,6 +106,7 @@ public class GameActivity extends AppCompatActivity{
             enemyLife.setProgress(100 * curEnemy.lifeValue / curEnemy.maxLife);
             enemyImage.setImageResource(curEnemy.avatar);
             curEnemy.refreshMaps(maps);
+            curTetro.bottom = curEnemy.target - 1;
 
             if(curEnemy.lifeValue <= 0){
                 curEnemy = new enemy(level, maps);
@@ -465,6 +466,12 @@ public class GameActivity extends AppCompatActivity{
                             e.printStackTrace();
                         }
 
+                        try {
+                            sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
                         if(isPause || isOver) {//如果正在暂停
                             continue;//跳过这次循环（不予攻击），缺点是能通过暂停躲过攻击，以后再说
                         }
@@ -472,6 +479,7 @@ public class GameActivity extends AppCompatActivity{
                         //敌人进攻
                         curEnemy.attack();
                         maps = curEnemy.getMaps();
+                        curTetro.bottom = curEnemy.target - 1;
                         if (curEnemy.speedUp != 0) {
                             curSpeed = curSpeed / 2;
                             try {//持续几秒
@@ -637,17 +645,12 @@ public class GameActivity extends AppCompatActivity{
                 blockPaint.setARGB(100,255,255,0);//文字
                 blockPaint.setAntiAlias(true);
 
-                for (int i = 0; i < curEnemy.block.length; i++) {
-                    for(int j = 0; j < curEnemy.block[i].length; j++){
-                        if (curEnemy.block[i][j]){
-                            canvas.drawRect(//画矩形->存在boxs中的box类，有则在相应的xy位置画个矩形
-                                    i * boxSize,
-                                    j * boxSize,
-                                    i * boxSize + boxSize,
-                                    j * boxSize + boxSize, blockPaint);
-                        }
-                    }
-                }
+
+                canvas.drawRect(//画矩形->存在boxs中的box类，有则在相应的xy位置画个矩形
+                        0 * boxSize,
+                        curEnemy.target * boxSize,
+                        10 * boxSize,
+                        curEnemy.target * boxSize + boxSize, blockPaint);
             }
         };
 
@@ -670,9 +673,7 @@ public class GameActivity extends AppCompatActivity{
                 for (int y = j; y > 0; y--) {
                     for(int i = 0; i < maps.length; i++){
                         //一行全为true才进行消行
-                        if(!curEnemy.block[i][y]){
                             maps[i][y] = maps[i][y - 1];
-                        }
                     }
                 }
                 counter++;
