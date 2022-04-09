@@ -1,18 +1,24 @@
 package com.example.tetrisrpg;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -23,6 +29,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import java.util.Arrays;
@@ -111,6 +118,10 @@ public class GameActivity extends AppCompatActivity{
             if(curEnemy.lifeValue <= 0){
                 curEnemy = new enemy(level, maps);
                 defeated ++;
+            }
+
+            if (isOver) {
+                setDialog(0);
             }
 
             lineRemvAnime();
@@ -314,6 +325,67 @@ public class GameActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 changePause();
+                setDialog(1);
+            }
+        });
+    }
+
+    private void setDialog(int mode) {
+        Dialog mCameraDialog = new Dialog(this, R.style.BottomDialog);
+        ConstraintLayout root = (ConstraintLayout)  LayoutInflater.from(this).inflate(
+                R.layout.bottom_dialog, null);
+        mCameraDialog.setCanceledOnTouchOutside(false);
+
+        //初始化视图
+
+        //弹出弹窗时是暂停还是游戏结束
+        if (mode == 0){//游戏结束
+            root.findViewById(R.id.pauseText).setVisibility(View.INVISIBLE);
+            root.findViewById(R.id.continueButton).setVisibility(View.INVISIBLE);
+        }else{//游戏暂停
+            root.findViewById(R.id.overText).setVisibility(View.INVISIBLE);
+        }
+
+        mCameraDialog.setContentView(root);
+        Window dialogWindow = mCameraDialog.getWindow();
+        dialogWindow.setGravity(Gravity.BOTTOM);
+        //dialogWindow.setWindowAnimations(R.style.dialogstyle); // 添加动画
+        WindowManager.LayoutParams lp = dialogWindow.getAttributes(); // 获取对话框当前的参数值
+        lp.x = 0; // 新位置X坐标
+        lp.y = 0; // 新位置Y坐标
+        lp.width = (int) getResources().getDisplayMetrics().widthPixels; // 宽度
+        root.measure(0, 0);
+        lp.height = root.getMeasuredHeight();
+
+        //lp.alpha = 9f; // 透明度，加了之后就只有白色底面了
+        dialogWindow.setAttributes(lp);
+        mCameraDialog.show();
+
+        //设置设置页面的按钮
+        //继续
+        root.findViewById(R.id.continueButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mCameraDialog.dismiss();
+                changePause();
+            }
+        });
+
+        //重新开始
+        root.findViewById(R.id.restartButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(GameActivity.this,GameActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        //退出
+        root.findViewById(R.id.quitButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(GameActivity.this,MainActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -397,7 +469,7 @@ public class GameActivity extends AppCompatActivity{
                 @Override
                 public void run() {
                     super.run();
-                    while(true){
+                    while(true && !isOver){
                         try {//创建线程后等个500ms
                             sleep(curSpeed);
                         } catch (InterruptedException e) {

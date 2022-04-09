@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.tetrisrpg" >
+    package="com.example.tetrisrpg">
 
     <application
         android:allowBackup="true"
@@ -8,17 +8,17 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.TetrisRPG" >
+        android:theme="@style/Theme.TetrisRPG">
         <activity
             android:name=".SettingActivity"
             android:exported="false"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.TetrisRPG"/>
+            android:theme="@style/Theme.TetrisRPG" />
         <activity
             android:name=".GameActivity"
             android:exported="false"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.TetrisRPG"/>
+            android:theme="@style/Theme.TetrisRPG" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
