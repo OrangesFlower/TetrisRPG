@@ -11,6 +11,7 @@ public class MainActivity extends AppCompatActivity {
     Button button;
     Button button2;
     Button button3;
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,5 +37,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        // 启动服务播放背景音乐
+        intent = new Intent(MainActivity.this, MyIntentService.class);
+        String action = MyIntentService.ACTION_MUSIC;
+        // 设置action
+        intent.setAction(action);
+        startService(intent);
     }
 }

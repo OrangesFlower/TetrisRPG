@@ -124,6 +124,14 @@ public class GameActivity extends AppCompatActivity{
                 setDialog(0);
             }
 
+            if (isAttack){
+                findViewById(R.id.warningGif).setVisibility(View.VISIBLE);
+                findViewById(R.id.warningView).setVisibility(View.VISIBLE);
+            } else {
+                findViewById(R.id.warningGif).setVisibility(View.INVISIBLE);
+                findViewById(R.id.warningView).setVisibility(View.INVISIBLE);
+            }
+
             lineRemvAnime();
         };
     };
@@ -185,6 +193,8 @@ public class GameActivity extends AppCompatActivity{
     TextView scoreView;
     //击败敌人数显示
     TextView defeatNum;
+    //敌人是否在攻击
+    boolean isAttack = false;
 
     //敌人信息显示
     TextView enemyName;
@@ -550,6 +560,7 @@ public class GameActivity extends AppCompatActivity{
 
                         //敌人进攻
                         curEnemy.attack();
+                        isAttack = true;
                         maps = curEnemy.getMaps();
                         curTetro.bottom = curEnemy.target - 1;
                         if (curEnemy.speedUp != 0) {
@@ -571,6 +582,7 @@ public class GameActivity extends AppCompatActivity{
                             isConfuse = false;
                             curEnemy.confuse = 0;
                         }
+                        isAttack = false;
                     }
                 }
             };

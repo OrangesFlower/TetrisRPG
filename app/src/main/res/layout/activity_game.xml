@@ -309,6 +309,38 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.987" />
 
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/warningGif"
+                android:layout_width="76dp"
+                android:layout_height="40dp"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="11dp"
+                android:layout_marginBottom="18dp"
+                android:src="@drawable/warning"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toTopOf="@+id/rotateButton"
+                app:layout_constraintEnd_toStartOf="@+id/warningView"
+                app:layout_constraintHorizontal_bias="0.675"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/abilityView"
+                app:layout_constraintVertical_bias="0.0"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/warningView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:shadowColor="@color/black"
+                android:text="Enemy is attacking"
+                android:textColor="#FF0000"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toTopOf="@+id/rotateButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.797"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.868" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
