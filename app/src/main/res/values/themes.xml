@@ -37,5 +37,20 @@
         <item name="android:windowEnterAnimation">@anim/dialog_in</item>
         <item name="android:windowExitAnimation">@anim/dialog_out</item>
     </style>
+    <style name="Theme.TetrisRPG.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <style name="Theme.TetrisRPG.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.TetrisRPG.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="setStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowBackground">#141C2B</item>                      <!-- 窗体背景   -->
+        <item name="android:windowTitleSize">36dp</item>                        <!--窗体标题栏高度-->
+        <!-- item name="android:listViewStyle"                          preference是一个LISTVIEW，这里设置该风格-->
+        <item name="android:textColorPrimary">#FFFFFF</item>                        <!-- preference一级文本颜色-->
+        <item name="android:textColorSecondary">#8C8C8C</item>                      <!--preference二级文本颜色-->
+        <item name="android:editTextColor">#000000</item>
+    </style>
 
 </resources>

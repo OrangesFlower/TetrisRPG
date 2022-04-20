@@ -4,16 +4,19 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -30,14 +33,23 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import pl.droidsonroids.gif.GifImageView;
 
 public class GameActivity extends AppCompatActivity{
+    //游戏BGM
+    MediaPlayer gamePlayer;
+
+    //用户设置
+    SharedPreferences sp;
+    boolean gameBGM;
+    String playerNamePre;
+
     //游戏区域空间
     SurfaceView gameView;
 
@@ -116,11 +128,13 @@ public class GameActivity extends AppCompatActivity{
             curTetro.bottom = curEnemy.target - 1;
 
             if(curEnemy.lifeValue <= 0){
+                playSound(8);
                 curEnemy = new enemy(level, maps);
                 defeated ++;
             }
 
             if (isOver) {
+                playSound(9);
                 setDialog(0);
             }
 
@@ -135,33 +149,6 @@ public class GameActivity extends AppCompatActivity{
             lineRemvAnime();
         };
     };
-
-    public Handler enemyHandler =new Handler(){
-        @SuppressLint("HandlerLeak")
-        public void handleMessage(android.os.Message msg){//敌人的画面刷新
-            //重绘画面
-            gameView.invalidate();
-            setImage(nextImage, nextTero.type);
-            scoreView.setText("Score:"+score);
-            defeatNum.setText("Defeated:"+defeated);
-
-            //敌人状态的替换
-            enemyName.setText(curEnemy.name);
-            enemyAbility.setText(curEnemy.ability);
-            enemyLife.setProgress(100 * curEnemy.lifeValue / curEnemy.maxLife);
-            enemyImage.setImageResource(curEnemy.avatar);
-            curEnemy.refreshMaps(maps);
-
-            if(curEnemy.lifeValue <= 0){
-                curEnemy = new enemy(level, maps);
-                defeated ++;
-            }
-
-            lineRemvAnime();
-        };
-    };
-
-
 
     //向左按钮
     Button leftButton;
@@ -189,6 +176,8 @@ public class GameActivity extends AppCompatActivity{
     //敌人图片
     ImageView enemyImage;
 
+    //玩家姓名
+    TextView playerName;
     //分数显示
     TextView scoreView;
     //击败敌人数显示
@@ -200,6 +189,10 @@ public class GameActivity extends AppCompatActivity{
     TextView enemyName;
     TextView enemyAbility;
     ProgressBar enemyLife;
+
+    //按钮音效池
+    private SoundPool mSoundPool ;
+    private HashMap<Integer,Integer> mSoundMap;//声音编号映射
 
 
     @Override
@@ -220,6 +213,7 @@ public class GameActivity extends AppCompatActivity{
         enemyImage = findViewById(R.id.enemyImage);
 
         playerView = findViewById(R.id.playerView);
+        playerName = (TextView) findViewById(R.id.playerName);
 
         scoreView = (TextView) findViewById(R.id.scoreView);
         defeatNum = (TextView) findViewById(R.id.defeated);
@@ -230,14 +224,23 @@ public class GameActivity extends AppCompatActivity{
         //敌人系统，生成敌人
         curEnemy = new enemy(level, maps);
 
+        //BGM
+        gamePlayer = MediaPlayer.create(this, R.raw.voyage_of_promise);
+        gamePlayer.setLooping(true);
 
+
+
+        initPreference();
         initdata();
         initview();
+        initSound();
         startGame();
         checkGame();
         checkEnemy();
 
-
+        if(!gamePlayer.isPlaying() && gameBGM){
+            gamePlayer.start();
+        }
 
 
         //左监听
@@ -245,6 +248,7 @@ public class GameActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 if(!isPause && !isOver){//暂停
+                    playSound(1);
                     if (isConfuse) curTetro.move(1 , 0);
                     else curTetro.move(-1 , 0);
                 }
@@ -257,6 +261,7 @@ public class GameActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 if(!isPause && !isOver){//暂停
+                    playSound(1);
                     if (isConfuse) curTetro.move(-1 , 0);
                     else curTetro.move(1 , 0);
                 }
@@ -287,6 +292,7 @@ public class GameActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 if(!isPause && !isOver){//暂停
+                    playSound(1);
                     curTetro.move(0 , 1);
                 }
                 gameView.invalidate();
@@ -299,6 +305,7 @@ public class GameActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 if(!isPause && !isOver){//暂停
+                    playSound(2);
                     curTetro.rotate();
                 }
                 gameView.invalidate();
@@ -310,6 +317,7 @@ public class GameActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 if(!isPause && !isOver){//暂停
+                    playSound(3);
                     while(!curTetro.isBottom){
                         curTetro.move(0,1);
                     }
@@ -324,6 +332,7 @@ public class GameActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 if(!isPause && !isOver){
+                    playSound(4);
                     changeHold();
                     setImage(holdImage,holdType);
                 }
@@ -334,17 +343,85 @@ public class GameActivity extends AppCompatActivity{
         pauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                playSound(5);
                 changePause();
                 setDialog(1);
             }
         });
+
+
+    }
+
+    private void initPreference() {//初始化用户设置
+        SharedPreferences sp =
+                PreferenceManager.getDefaultSharedPreferences(this /* Activity context */);
+        gameBGM = sp.getBoolean("GameBGM", true);
+        playerNamePre = sp.getString("PlayerName", "aaa");
+    }
+
+    private void initSound() {//初始化音效池
+        mSoundMap = new HashMap<>();
+        mSoundPool = new SoundPool(3, AudioManager.STREAM_MUSIC,100);
+        loadSound(1,R.raw.control);
+        loadSound(2,R.raw.rotate);
+        loadSound(3,R.raw.harddrop);
+        loadSound(4,R.raw.hold);
+        loadSound(5,R.raw.pause);
+        loadSound(6,R.raw.elimination);
+        loadSound(7,R.raw.alarm);
+        loadSound(8,R.raw.deathofenemy);
+        loadSound(9,R.raw.gameover);
+        loadSound(10,R.raw.restart);
+    }
+
+    /**
+     * 把音频资源添加到声音池
+     * @param seq
+     * @param resid
+     */
+    private void loadSound(int seq,int resid){
+        int soundID = mSoundPool.load(this,resid,1);
+        mSoundMap.put(seq,soundID);
+    }
+
+    /**
+     * 播放指定音频
+     * @param seq
+     */
+    private void playSound(int seq){
+        int soundID = mSoundMap.get(seq);
+        mSoundPool.play(soundID,1.0f,1.0f,1,0,1.0f);
+    }
+
+    @Override
+    protected void onDestroy() {
+        //释放MediaPlayer资源，这个很占用资源
+        System.out.println("游戏音乐停止");
+        gamePlayer.stop();
+        gamePlayer.release();
+        gamePlayer = null;
+
+        super.onDestroy();
+    }
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // 是否触发按键为back键
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            changePause();
+            setDialog(1);
+            return true;
+        } else {// 如果不是back键正常响应
+            return super.onKeyDown(keyCode, event);
+        }
     }
 
     private void setDialog(int mode) {
-        Dialog mCameraDialog = new Dialog(this, R.style.BottomDialog);
+        Dialog mDialog = new Dialog(this, R.style.BottomDialog);
         ConstraintLayout root = (ConstraintLayout)  LayoutInflater.from(this).inflate(
                 R.layout.bottom_dialog, null);
-        mCameraDialog.setCanceledOnTouchOutside(false);
+        mDialog.setCanceledOnTouchOutside(false);
 
         //初始化视图
 
@@ -356,8 +433,8 @@ public class GameActivity extends AppCompatActivity{
             root.findViewById(R.id.overText).setVisibility(View.INVISIBLE);
         }
 
-        mCameraDialog.setContentView(root);
-        Window dialogWindow = mCameraDialog.getWindow();
+        mDialog.setContentView(root);
+        Window dialogWindow = mDialog.getWindow();
         dialogWindow.setGravity(Gravity.BOTTOM);
         //dialogWindow.setWindowAnimations(R.style.dialogstyle); // 添加动画
         WindowManager.LayoutParams lp = dialogWindow.getAttributes(); // 获取对话框当前的参数值
@@ -369,14 +446,15 @@ public class GameActivity extends AppCompatActivity{
 
         //lp.alpha = 9f; // 透明度，加了之后就只有白色底面了
         dialogWindow.setAttributes(lp);
-        mCameraDialog.show();
+        mDialog.show();
 
         //设置设置页面的按钮
         //继续
         root.findViewById(R.id.continueButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mCameraDialog.dismiss();
+                playSound(5);
+                mDialog.dismiss();
                 changePause();
             }
         });
@@ -385,8 +463,11 @@ public class GameActivity extends AppCompatActivity{
         root.findViewById(R.id.restartButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                playSound(10);
                 Intent intent = new Intent(GameActivity.this,GameActivity.class);
                 startActivity(intent);
+                mDialog.dismiss();
+                finish();
             }
         });
 
@@ -394,8 +475,11 @@ public class GameActivity extends AppCompatActivity{
         root.findViewById(R.id.quitButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                playSound(9);
                 Intent intent = new Intent(GameActivity.this,MainActivity.class);
                 startActivity(intent);
+                mDialog.dismiss();
+                finish();
             }
         });
     }
@@ -548,12 +632,6 @@ public class GameActivity extends AppCompatActivity{
                             e.printStackTrace();
                         }
 
-                        try {
-                            sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
                         if(isPause || isOver) {//如果正在暂停
                             continue;//跳过这次循环（不予攻击），缺点是能通过暂停躲过攻击，以后再说
                         }
@@ -561,6 +639,7 @@ public class GameActivity extends AppCompatActivity{
                         //敌人进攻
                         curEnemy.attack();
                         isAttack = true;
+                        playSound(7);
                         maps = curEnemy.getMaps();
                         curTetro.bottom = curEnemy.target - 1;
                         if (curEnemy.speedUp != 0) {
@@ -581,6 +660,14 @@ public class GameActivity extends AppCompatActivity{
                             }
                             isConfuse = false;
                             curEnemy.confuse = 0;
+                        }else if (curEnemy.type == 4){
+                            try {
+                                sleep(10000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            curTetro.bottom = 19;
+                            curEnemy.target = 20;
                         }
                         isAttack = false;
                     }
@@ -602,6 +689,10 @@ public class GameActivity extends AppCompatActivity{
 
     //初始化画面数据
     private void initdata(){
+        //初始化敌人数
+        defeatNum.setText("Defeated:"+defeated);
+        //设置用户姓名
+        playerName.setText(playerNamePre);
         //获得屏幕宽度
         int width=getScreenWidth(this);
         int height=getScreenHeight(this);
@@ -780,15 +871,23 @@ public class GameActivity extends AppCompatActivity{
         if(isPreTspin) plus = 1.5F;
 
         if(counter == 1) {
+            playSound(6);
             if(isTspin) goal = 800 * plus;
             else goal = 100 * plus;
         }
         else if(counter == 2) {
+            playSound(6);
             if(isTspin) goal = 1200 * plus;
             else goal = 300 * plus;
         }
-        else if(counter == 3) goal = 500 * plus;
-        else if(counter == 4) goal = 800 * plus;
+        else if(counter == 3) {
+            playSound(6);
+            goal = 500 * plus;
+        }
+        else if(counter == 4) {
+            playSound(6);
+            goal = 800 * plus;
+        }
 
         curEnemy.wounded((int) goal);
         score += goal;

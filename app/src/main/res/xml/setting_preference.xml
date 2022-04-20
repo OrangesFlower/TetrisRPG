@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/black">
+
+    <PreferenceCategory android:title="Music">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="menuBGM"
+            android:summary="You can chose to play BGM in menu or not."
+            android:title="Background music in main menu"
+            tools:visibility="visible" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="GameBGM"
+            android:summary="You can chose to play BGM in gaming or not."
+            android:title="Background music in gaming" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Gameplay">
+
+        <EditTextPreference
+            android:defaultValue="Player"
+            android:key="PlayerName"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="The name will be showed in game"
+            android:title="Edit your name" />
+    </PreferenceCategory>
+</PreferenceScreen>

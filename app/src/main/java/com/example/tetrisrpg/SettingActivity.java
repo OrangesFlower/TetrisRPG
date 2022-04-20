@@ -1,14 +1,44 @@
 package com.example.tetrisrpg;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
+import android.view.KeyEvent;
+import android.widget.TextView;
 
-public class SettingActivity extends AppCompatActivity {
+import androidx.preference.PreferenceManager;
+
+
+public class SettingActivity extends PreferenceActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setting);
+        addPreferencesFromResource(R.xml.setting_preference);
+
+        SharedPreferences sp =
+                PreferenceManager.getDefaultSharedPreferences(this /* Activity context */);
+        Boolean menuBGM = sp.getBoolean("menuBGM", true);
+        if(menuBGM) System.out.println("yyy");
+
+        String playerName = sp.getString("PlayerName", "aaa");
+        System.out.println(playerName);
+
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // 是否触发按键为back键
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Intent intent = new Intent(SettingActivity.this,MainActivity.class);
+            startActivity(intent);
+            return true;
+        } else {// 如果不是back键正常响应
+            return super.onKeyDown(keyCode, event);
+        }
     }
 }

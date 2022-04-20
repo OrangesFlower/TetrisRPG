@@ -48,7 +48,7 @@ public class enemy {
         //type = 4;
         setType(type);
 //之后要改成随机的
-        interval = 10000;
+        interval = 20000 + random.nextInt(10) * 1000;
     }
 
     void refreshMaps(boolean[][] maps){

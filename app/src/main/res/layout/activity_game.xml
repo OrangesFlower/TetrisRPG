@@ -96,6 +96,19 @@
                 tools:layout_editor_absoluteX="1dp"
                 tools:layout_editor_absoluteY="0dp" />
 
+            <TextView
+                android:id="@+id/playerName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Player"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.355"
+                app:layout_constraintStart_toEndOf="@+id/playerView"
+                app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -200,7 +213,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.274" />
+                app:layout_constraintVertical_bias="0.25" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="192dp"
@@ -291,10 +304,10 @@
                 app:cornerRadius="50dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.827"
+                app:layout_constraintHorizontal_bias="0.846"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.738" />
+                app:layout_constraintVertical_bias="0.72" />
 
             <Button
                 android:id="@+id/holdButton"
@@ -311,8 +324,8 @@
 
             <pl.droidsonroids.gif.GifImageView
                 android:id="@+id/warningGif"
-                android:layout_width="76dp"
-                android:layout_height="40dp"
+                android:layout_width="74dp"
+                android:layout_height="36dp"
                 android:layout_centerInParent="true"
                 android:layout_marginTop="11dp"
                 android:layout_marginBottom="18dp"
@@ -320,7 +333,7 @@
                 android:visibility="invisible"
                 app:layout_constraintBottom_toTopOf="@+id/rotateButton"
                 app:layout_constraintEnd_toStartOf="@+id/warningView"
-                app:layout_constraintHorizontal_bias="0.675"
+                app:layout_constraintHorizontal_bias="0.853"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/abilityView"
                 app:layout_constraintVertical_bias="0.0"
@@ -330,16 +343,14 @@
                 android:id="@+id/warningView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="28dp"
+                android:layout_marginBottom="44dp"
                 android:shadowColor="@color/black"
                 android:text="Enemy is attacking"
                 android:textColor="#FF0000"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toTopOf="@+id/rotateButton"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.797"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.868" />
+                app:layout_constraintEnd_toEndOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>

@@ -9,15 +9,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TetrisRPG">
-        <service
-            android:name=".MyIntentService"
-            android:exported="false"></service>
-
+        <activity
+            android:name=".ScoreActivity"
+            android:screenOrientation="landscape"
+            android:exported="false" />
         <activity
             android:name=".SettingActivity"
             android:exported="false"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.TetrisRPG" />
+            android:theme="@style/setStyle" />
         <activity
             android:name=".GameActivity"
             android:exported="false"
