@@ -9,8 +9,10 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.HashMap;
 
@@ -19,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     Button button2;
     Button button3;
     MediaPlayer menuPlayer;
+    private long exitTime = 0;
 
     //按钮音效池
     private SoundPool mSoundPool ;
@@ -75,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 playSound(2);
                 Intent intent = new Intent(MainActivity.this,ScoreActivity.class);
                 startActivity(intent);
-
+                finish();
             }
         });
 
@@ -115,5 +118,21 @@ public class MainActivity extends AppCompatActivity {
         menuPlayer.release();
         menuPlayer = null;
         super.onDestroy();
+    }
+
+    //重写onKeyDown()方法,连续按两次返回退出
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){
+            if((System.currentTimeMillis()-exitTime) > 2000){
+                Toast.makeText(MainActivity.this, "Press again to exit the game", Toast.LENGTH_SHORT).show();
+                exitTime = System.currentTimeMillis();
+            } else {
+                finish();
+                System.exit(0);
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

@@ -7,7 +7,6 @@ title __TETRISRPG's Class Diagram__\n
         + checkThread : Thread
         + downThread : Thread
         + enemyAttack : Thread
-        + enemyHandler : Handler
         + enemyThread : Thread
         + handler : Handler
         ~ blockPaint : Paint
@@ -22,6 +21,8 @@ title __TETRISRPG's Class Diagram__\n
         ~ enemyImage : ImageView
         ~ enemyLife : ProgressBar
         ~ enemyName : TextView
+        ~ gameBGM : boolean
+        ~ gamePlayer : MediaPlayer
         ~ gameView : SurfaceView
         ~ hardDropButton : Button
         ~ holdButton : Button
@@ -41,19 +42,26 @@ title __TETRISRPG's Class Diagram__\n
         ~ maps : boolean[][]
         ~ nextImage : ImageView
         ~ pauseButton : ImageButton
+        ~ playerName : TextView
+        ~ playerNamePre : String
         ~ playerView : GifImageView
         ~ rightButton : Button
         ~ rotateButton : Button
         ~ score : int
         ~ scoreView : TextView
+        ~ sp : SharedPreferences
         ~ statePaint : Paint
         ~ xHight : int
         ~ xWidth : int
         - borderPaint : Paint
+        - mSoundMap : HashMap<Integer, Integer>
+        - mSoundPool : SoundPool
         + changePause()
         + checkLine()
         + checkOver()
+        + onKeyDown()
         # onCreate()
+        # onDestroy()
         ~ removeLine()
         - changeHold()
         - checkEnemy()
@@ -62,9 +70,14 @@ title __TETRISRPG's Class Diagram__\n
         - getScreenHeight()
         - getScreenWidth()
         - goal()
+        - initPreference()
+        - initSound()
         - initdata()
         - initview()
         - lineRemvAnime()
+        - loadSound()
+        - playSound()
+        - saveData()
         - setDialog()
         - setImage()
         - startGame()
@@ -77,31 +90,34 @@ title __TETRISRPG's Class Diagram__\n
         ~ button : Button
         ~ button2 : Button
         ~ button3 : Button
-        - intent : Intent
+        ~ menuPlayer : MediaPlayer
+        - exitTime : long
+        - mSoundMap : HashMap<Integer, Integer>
+        - mSoundPool : SoundPool
+        + onKeyDown()
         # onCreate()
+        # onDestroy()
+        - initSound()
+        - loadSound()
+        - playSound()
     }
   }
   
 
   namespace com.example.tetrisrpg {
-    class com.example.tetrisrpg.MyIntentService {
-        {static} + ACTION_BAZ : String
-        {static} + ACTION_FOO : String
-        {static} + ACTION_MUSIC : String
-        {static} + EXTRA_PARAM1 : String
-        {static} + EXTRA_PARAM2 : String
-        - mediaPlayer : MediaPlayer
-        + MyIntentService()
-        # onHandleIntent()
-        - handleActionBaz()
-        - handleActionFoo()
-        - handleActionMusic()
+    class com.example.tetrisrpg.ScoreActivity {
+        ~ gson : Gson
+        ~ list : ArrayList<gameData>
+        + onKeyDown()
+        # onCreate()
+        - readData()
     }
   }
   
 
   namespace com.example.tetrisrpg {
     class com.example.tetrisrpg.SettingActivity {
+        + onKeyDown()
         # onCreate()
     }
   }
@@ -174,13 +190,33 @@ title __TETRISRPG's Class Diagram__\n
   }
   
 
+  namespace com.example.tetrisrpg {
+    class com.example.tetrisrpg.gameData {
+        - defeated : int
+        - name : String
+        - score : int
+        + compareTo()
+        + gameData()
+        + gameData()
+        + getDefeated()
+        + getName()
+        + getScore()
+        + setDefeated()
+        + setName()
+        + setScore()
+        + toString()
+    }
+  }
+  
+
   com.example.tetrisrpg.GameActivity -up-|> androidx.appcompat.app.AppCompatActivity
   com.example.tetrisrpg.GameActivity o-- com.example.tetrisrpg.enemy : curEnemy
   com.example.tetrisrpg.GameActivity o-- com.example.tetrisrpg.Tetrominoes : curTetro
   com.example.tetrisrpg.GameActivity o-- com.example.tetrisrpg.Tetrominoes : nextTero
   com.example.tetrisrpg.MainActivity -up-|> androidx.appcompat.app.AppCompatActivity
-  com.example.tetrisrpg.MyIntentService -up-|> android.app.IntentService
-  com.example.tetrisrpg.SettingActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.example.tetrisrpg.ScoreActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.example.tetrisrpg.SettingActivity -up-|> android.preference.PreferenceActivity
+  com.example.tetrisrpg.gameData .up.|> java.lang.Comparable
 
 
 right footer

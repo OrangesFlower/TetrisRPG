@@ -25,7 +25,7 @@ public class SettingActivity extends PreferenceActivity {
         Boolean menuBGM = sp.getBoolean("menuBGM", true);
         if(menuBGM) System.out.println("yyy");
 
-        String playerName = sp.getString("PlayerName", "aaa");
+        String playerName = sp.getString("PlayerName", "Player");
         System.out.println(playerName);
 
     }
@@ -36,6 +36,7 @@ public class SettingActivity extends PreferenceActivity {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             Intent intent = new Intent(SettingActivity.this,MainActivity.class);
             startActivity(intent);
+            finish();
             return true;
         } else {// 如果不是back键正常响应
             return super.onKeyDown(keyCode, event);

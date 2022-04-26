@@ -7,4 +7,48 @@
     android:background="#000000"
     tools:context=".ScoreActivity">
 
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:background="#000000"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/back"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="212dp"
+        android:layout_height="61dp"
+        android:text="Score List"
+        android:textColor="#FFFFFF"
+        android:textSize="48sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.499"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <com.lingber.mycontrol.datagridview.DataGridView
+        android:id="@+id/datagridview"
+        android:layout_width="671dp"
+        android:layout_height="304dp"
+        app:dividerSize="2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.82"
+        app:row_height="50"
+        app:show_header="true">
+
+    </com.lingber.mycontrol.datagridview.DataGridView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

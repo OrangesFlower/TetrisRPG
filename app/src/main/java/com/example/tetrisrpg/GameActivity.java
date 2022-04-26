@@ -15,6 +15,7 @@ import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -35,6 +36,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.preference.PreferenceManager;
 
+import com.google.gson.Gson;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -464,6 +471,7 @@ public class GameActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 playSound(10);
+                saveData();
                 Intent intent = new Intent(GameActivity.this,GameActivity.class);
                 startActivity(intent);
                 mDialog.dismiss();
@@ -476,6 +484,7 @@ public class GameActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 playSound(9);
+                saveData();
                 Intent intent = new Intent(GameActivity.this,MainActivity.class);
                 startActivity(intent);
                 mDialog.dismiss();
@@ -914,6 +923,34 @@ public class GameActivity extends AppCompatActivity{
 
     public void changePause(){
         isPause = !isPause;//点一下暂停，再点一下继续
+    }
+
+
+    private void saveData() {//游戏结束时存档
+        gameData playerData = new gameData(playerNamePre, score, defeated);
+        String fileName = "mydb.txt";
+        FileOutputStream fos = null;
+        Gson gson = new Gson();
+        String jsonUser = gson.toJson(playerData)+";";
+
+        try {
+            fos = openFileOutput(fileName, MODE_APPEND);
+            fos.write(jsonUser.getBytes());
+
+            Log.d("成功保存数据","yes");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if(fos != null){
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 }

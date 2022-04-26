@@ -62,28 +62,28 @@ public class enemy {
     void setType(int type){
         switch (type){
             case 0:
-                name = "MR";
-                avatar = R.drawable.mr;
+                name = "Black Tortoise";
+                avatar = R.drawable.black_tortoise;
                 ability = "RISING\nRising! Redundant line!";
                 break;
             case 1:
-                name = "ZCC";
-                avatar = R.drawable.zcc;
+                name = "Poisonous Bee";
+                avatar = R.drawable.poisonous_bee;
                 ability = "DIGGING\nIt will break some cube!";
                 break;
             case 2:
-                name = "YZX";
-                avatar = R.drawable.yzx;
+                name = "Magician";
+                avatar = R.drawable.magician;
                 ability = "CONFUSE\nNow your control keys are reversed!";
                 break;
             case 3:
-                name = "LYB";
-                avatar = R.drawable.lyb;
+                name = "Evil Dragon";
+                avatar = R.drawable.evil_dragon;
                 ability = "ACCELERATE\nNow the falling speed is twice!";
                 break;
             case 4:
-                name = "LY";
-                avatar = R.drawable.ly;
+                name = "Spider";
+                avatar = R.drawable.spider;
                 ability = "BLOCK\nYou can't pass the yellow line!";
                 break;
         }
@@ -134,7 +134,7 @@ public class enemy {
         int x;//打洞的横坐标
         int y;//打洞的纵坐标
         Random random = new Random();
-        for (int i = 0; i < 3; i++){//暂且定位打三个洞
+        for (int i = 0; i < 2; i++){//暂且定为打三个洞
             x = random.nextInt(10);
             y = random.nextInt(20);
             while(!maps[x][y]){//若要打孔位置本来就是空的，则重新选择孔位。
